@@ -73,13 +73,13 @@
                             <div class="d-flex flex-column align-items-end">
                                 <span class="badge bg-success-subtle text-success border border-success-subtle mb-2">LUNAS</span>
                                 <!-- <form action="{{ route('sales.destroy', $transaction->id) }}" method="POST"
-                                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi ini? Stok akan dikembalikan.');">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
-                                                        </form> -->
+                                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi ini? Stok akan dikembalikan.');">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                            <i class="fas fa-trash-alt"></i>
+                                                                        </button>
+                                                                    </form> -->
                             </div>
                         </div>
                         <hr class="my-2">
