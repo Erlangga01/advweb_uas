@@ -11,4 +11,4 @@ Route::get('/inventory', [MaterialController::class, 'index'])->name('inventory.
 
 Route::get('/sales', [TransactionController::class, 'index'])->name('sales.index');
 Route::post('/sales', [TransactionController::class, 'store'])->name('sales.store');
-Route::delete('/sales/{id}', [TransactionController::class, 'destroy'])->name('sales.destroy');
+// Route::delete('/sales/{id}', [TransactionController::class, 'destroy'])->name('sales.destroy');

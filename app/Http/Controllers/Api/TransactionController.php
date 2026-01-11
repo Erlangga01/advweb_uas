@@ -16,51 +16,44 @@ class TransactionController extends Controller
         $request->validate([
             'customer_name' => 'required',
             'transaction_date' => 'required|date',
+            'grand_totalnya' => 'required|numeric',
             'items' => 'required|array',
             'items.*.product_id' => 'required|exists:products,id',
+            'items.*.name' => 'required|string',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.satuan' => 'required|string',
+            'items.*.price' => 'required|numeric',
+            'items.*.total_price' => 'required|numeric',
         ]);
 
         try {
             DB::beginTransaction();
 
-            $totalTransaction = 0;
-            $detailsData = [];
-            $productsCache = [];
-
-            // Hitung total terlebih dahulu
-            foreach ($request->items as $item) {
-                $product = Product::with('materials')->findOrFail($item['product_id']);
-                $subtotal = $product->price * $item['quantity'];
-                $totalTransaction += $subtotal;
-
-                $detailsData[] = [
-                    'product' => $product,
-                    'quantity' => $item['quantity'],
-                    'subtotal' => $subtotal
-                ];
-            }
-
             $transaction = Transaction::create([
                 'customer_name' => $request->customer_name,
                 'transaction_date' => $request->transaction_date,
-                'total_amount' => $totalTransaction
+                'total_amount' => $request->grand_totalnya
             ]);
 
-            foreach ($detailsData as $data) {
+            foreach ($request->items as $item) {
                 // Buat Detail
                 TransactionDetail::create([
                     'transaction_id' => $transaction->id,
-                    'product_id' => $data['product']->id,
-                    'quantity' => $data['quantity'],
-                    'price' => $data['product']->price,
-                    'subtotal' => $data['subtotal']
+                    'product_id' => $item['product_id'],
+                    'name' => $item['name'],
+                    'quantity' => $item['quantity'],
+                    'satuan' => $item['satuan'],
+                    'price' => $item['price'],
+                    'subtotal' => $item['total_price']
                 ]);
 
-                // Kurangi Stok
-                foreach ($data['product']->materials as $material) {
-                    $needed = $material->pivot->quantity_needed * $data['quantity'];
-                    $material->decrement('stock', $needed);
+                // Update Stok (Tetap dilakukan untuk konsistensi data, meski harga dari client)
+                $product = Product::with('materials')->find($item['product_id']);
+                if ($product) {
+                    foreach ($product->materials as $material) {
+                        $needed = $material->pivot->quantity_needed * $item['quantity'];
+                        $material->decrement('stock', $needed);
+                    }
                 }
             }
 

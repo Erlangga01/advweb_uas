@@ -42,65 +42,57 @@
 
     <div class="row">
         @forelse($transactions as $transaction)
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100 border-start border-4 border-success">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div>
-                                    <h6 class="card-subtitle mb-2 text-muted small">
-                                        <i class="far fa-calendar-alt me-1"></i>
-                                        {{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d M Y') }}
-                                        &nbsp;&bull;&nbsp;
-                                        <i class="far fa-user me-1"></i> {{ $transaction->customer_name }}
-                                    </h6>
+            <div class="col-md-6 mb-3">
+                <div class="card h-100 border-start border-4 border-success">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="card-subtitle mb-2 text-muted small">
+                                    <i class="far fa-calendar-alt me-1"></i>
+                                    {{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d M Y') }}
+                                    &nbsp;&bull;&nbsp;
+                                    <i class="far fa-user me-1"></i> {{ $transaction->customer_name }}
+                                </h6>
 
-                                    <div class="bg-light rounded p-2 mb-2">
-                                        <ul class="list-unstyled mb-0 small">
-                                            @foreach($transaction->details as $detail)
-                                                <li
-                                                    class="d-flex justify-content-between border-bottom border-white pb-1 mb-1 last-border-0">
-                                                    <span>
-                                                        {{ $detail->product->name }}
-                                                        <span class="fw-bold text-secondary">x{{ $detail->quantity }}</span>
-                                                    </span>
-                                                    <span>Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</span>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
+                                <div class="bg-light rounded p-2 mb-2">
+                                    <ul class="list-unstyled mb-0 small">
+                                        @foreach($transaction->details as $detail)
+                                            <li
+                                                class="d-flex justify-content-between border-bottom border-white pb-1 mb-1 last-border-0">
+                                                <span>
+                                                    {{ $detail->name ?? $detail->product->name ?? 'Unknown Product' }}
+                                                    <span class="fw-bold text-secondary">x{{ $detail->quantity }}</span>
+                                                </span>
+                                                <span>Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="d-flex flex-column align-items-end">
-                                <span class="badge bg-success-subtle text-success border border-success-subtle mb-2">LUNAS</span>
-                                <!-- <form action="{{ route('sales.destroy', $transaction->id) }}" method="POST"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi ini? Stok akan dikembalikan.');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </form> -->
-                            </div>
                         </div>
-                        <hr class="my-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-secondary small">Total Bayar</span>
-                            <span class="fw-bold fs-5 text-dark">Rp
-                                {{ number_format($transaction->total_amount, 0, ',', '.') }}</span>
+                        <div class="d-flex flex-column align-items-end gap-2">
+                            <span class="badge bg-success-subtle text-success border border-success-subtle mb-2">LUNAS</span>
                         </div>
+                    </div>
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-secondary small">Total Bayar</span>
+                        <span class="fw-bold fs-5 text-dark">Rp
+                            {{ number_format($transaction->total_amount, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>
+
         @empty
-        <div class="col-12">
-            <div class="card text-center py-5 border-dashed">
-                <div class="card-body">
-                    <i class="fas fa-shopping-basket fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">Belum ada data penjualan</h5>
-                    <a href="{{ route('home') }}" class="btn btn-primary mt-2">Input Penjualan Baru</a>
+            <div class="col-12">
+                <div class="card text-center py-5 border-dashed">
+                    <div class="card-body">
+                        <i class="fas fa-shopping-basket fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Belum ada data penjualan</h5>
+                        <a href="{{ route('home') }}" class="btn btn-primary mt-2">Input Penjualan Baru</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    @endforelse
+        @endforelse
     </div>
 @endsection

@@ -100,4 +100,15 @@ class AxlController extends Controller
             return response()->json(['message' => 'Gagal menyimpan transaksi: ' . $e->getMessage()], 500);
         }
     }
+    // 5. GET: Ambil detail transaksi per ID
+    public function getTransaction($id)
+    {
+        $transaction = Transaction::with('details.product')->find($id);
+
+        if (!$transaction) {
+            return response()->json(['message' => 'Transaksi tidak ditemukan'], 404);
+        }
+
+        return response()->json($transaction);
+    }
 }

@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Models\Product;
 use App\Models\TransactionDetail;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransactionController extends Controller
 {
@@ -30,6 +31,10 @@ class TransactionController extends Controller
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.name' => 'nullable|string',
+            'items.*.price' => 'nullable|numeric|min:0',
+            'items.*.total_price' => 'nullable|numeric|min:0',
+            'items.*.satuan' => 'nullable|string',
         ]);
 
         $totalAmount = 0;
@@ -87,17 +92,26 @@ class TransactionController extends Controller
                 'total_amount' => 0 // Akan diperbarui nanti
             ]);
 
-            foreach ($requestedProducts as $productId => $qty) {
-                $product = Product::find($productId);
-                $subtotal = $product->price * $qty;
+            foreach ($request->items as $item) {
+                $product = Product::find($item['product_id']);
+                $qty = $item['quantity'];
+
+                // Use provided price/total_price or fallback to product defaults
+                $price = $item['price'] ?? $product->price;
+                $subtotal = $item['total_price'] ?? ($price * $qty);
+                $name = $item['name'] ?? $product->name;
+                $satuan = $item['satuan'] ?? null;
+
                 $totalAmount += $subtotal;
 
                 TransactionDetail::create([
                     'transaction_id' => $transaction->id,
                     'product_id' => $product->id,
                     'quantity' => $qty,
-                    'price' => $product->price,
-                    'subtotal' => $subtotal
+                    'price' => $price,
+                    'subtotal' => $subtotal,
+                    'name' => $name,
+                    'satuan' => $satuan
                 ]);
 
                 // Kurangi stok
@@ -132,5 +146,5 @@ class TransactionController extends Controller
     //     });
 
     //     return back()->with('success', 'Transaksi berhasil dihapus dan stok telah dikembalikan.');
-    // }
+    //
 }
