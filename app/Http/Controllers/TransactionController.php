@@ -14,13 +14,13 @@ class TransactionController extends Controller
     public function index()
     {
         $transactions = Transaction::latest()->with('details.product')->get();
-        return view('sales.index', compact('transactions'));
+        return response()->json($transactions);
     }
 
     public function create()
     {
         $products = Product::all();
-        return view('sales.create', compact('products'));
+        return response()->json($products);
     }
 
     public function store(Request $request)
@@ -81,11 +81,11 @@ class TransactionController extends Controller
         foreach ($materialNeeds as $materialId => $needed) {
             $material = \App\Models\Material::find($materialId);
             if ($material->stock < $needed) {
-                return back()->with('error', "Stok bahan {$material->name} tidak mencukupi. Total Dibutuhkan: {$needed}, Tersedia: {$material->stock}");
+                return response()->json(['message' => "Stok bahan {$material->name} tidak mencukupi. Total Dibutuhkan: {$needed}, Tersedia: {$material->stock}"], 400);
             }
         }
 
-        DB::transaction(function () use ($request, $requestedProducts, &$totalAmount) {
+        $transaction = DB::transaction(function () use ($request, $requestedProducts, &$totalAmount) {
             $transaction = Transaction::create([
                 'customer_name' => $request->customer_name,
                 'transaction_date' => $request->transaction_date,
@@ -122,9 +122,10 @@ class TransactionController extends Controller
             }
 
             $transaction->update(['total_amount' => $totalAmount]);
+            return $transaction;
         });
 
-        return redirect()->route('sales.index')->with('success', 'Transaksi berhasil disimpan');
+        return response()->json(['message' => 'Transaksi berhasil disimpan', 'data' => $transaction], 201);
     }
     // public function destroy($id)
     // {

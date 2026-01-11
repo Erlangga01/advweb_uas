@@ -2,13 +2,22 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\MaterialController;
-use App\Http\Controllers\TransactionController;
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
 
-Route::get('/', [TransactionController::class, 'create'])->name('home');
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::get('/inventory', [MaterialController::class, 'index'])->name('inventory.index');
-
-Route::get('/sales', [TransactionController::class, 'index'])->name('sales.index');
-Route::post('/sales', [TransactionController::class, 'store'])->name('sales.store');
-// Route::delete('/sales/{id}', [TransactionController::class, 'destroy'])->name('sales.destroy');
+// All functionality has been moved to routes/api.php to ensure proper middleware protection.
+// Previously exposed routes:
+// - /inventory -> /api/materials
+// - /sales -> /api/transactions

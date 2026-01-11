@@ -6,8 +6,9 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AxlController;
 
 use App\Http\Controllers\Api\ProductController;
-use App\Http\Controllers\Api\MaterialController;
-use App\Http\Controllers\Api\TransactionController;
+// Use the root controllers which were recently updated to return JSON
+use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\TransactionController;
 
 
 // Public Routes
@@ -23,7 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products', [ProductController::class, 'index']);
     Route::get('/materials', [MaterialController::class, 'index']);
 
-    Route::get('/transactions', [AxlController::class, 'getTransactions']);
+    Route::get('/transactions', [TransactionController::class, 'index']);
     Route::get('/transactions/{id}', [AxlController::class, 'getTransaction']);
     Route::post('/transactions', [TransactionController::class, 'store']);
 });

@@ -10,6 +10,6 @@ class MaterialController extends Controller
     public function index()
     {
         $materials = Material::all();
-        return view('inventory.index', compact('materials'));
+        return response()->json($materials);
     }
 }
